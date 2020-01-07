@@ -13,11 +13,11 @@ export const updateList = () => {
 	return dispatch => {
 		return axios.get('/list.json').then(
 			response => {
-				dispatch(updateListSuccess(response.data));
+				return dispatch(updateListSuccess(response.data));
 			},
 			error => {
 				const errorObj = error.response ? error.response.data : {error: 'No internet'};
-				dispatch(updateListFailure(errorObj));
+				return dispatch(updateListFailure(errorObj));
 			}
 		)
 	}

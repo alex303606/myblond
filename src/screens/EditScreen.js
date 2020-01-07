@@ -110,7 +110,6 @@ class EditScreen extends Component {
 					<View style={styles.row}>
 						<Text style={styles.label}>Количество:</Text>
 						<TextInput
-							multiline
 							value={amount}
 							placeholder='Введите количество:'
 							onChangeText={this.changeValue('amount')}
@@ -125,7 +124,6 @@ class EditScreen extends Component {
 					<View style={styles.row}>
 						<Text style={styles.label}>Своя цена:</Text>
 						<TextInput
-							multiline
 							value={myPrice}
 							placeholder='Введите своя цену:'
 							onChangeText={this.changeValue('myPrice')}
@@ -140,7 +138,6 @@ class EditScreen extends Component {
 					<View style={styles.row}>
 						<Text style={styles.label}>Продажная цена:</Text>
 						<TextInput
-							multiline
 							value={clientPrice}
 							placeholder='Введите продажную цену:'
 							onChangeText={this.changeValue('clientPrice')}

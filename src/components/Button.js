@@ -11,6 +11,11 @@ const styles = StyleSheet.create({
 		alignItems: 'center',
 		justifyContent: 'center',
 	},
+	text: {
+		color: 'white',
+		fontSize: 18,
+		fontWeight: 'bold',
+	},
 });
 
 const Button = props => {
@@ -19,7 +24,7 @@ const Button = props => {
 			activeOpacity={0.7}
 			style={[styles.button, props.buttonStyle]}
 			onPress={props.onPress}>
-			<Text style={props.textStyle}>{props.title}</Text>
+			<Text style={[styles.text, props.textStyle]}>{props.title}</Text>
 		</TouchableOpacity>
 	);
 };
