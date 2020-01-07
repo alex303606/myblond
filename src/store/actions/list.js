@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { UPDATE_LIST_FAILURE, UPDATE_LIST_SUCCESS } from './actionTypes';
+import { SELECT_ITEM, UPDATE_LIST_FAILURE, UPDATE_LIST_SUCCESS } from './actionTypes';
 
 const updateListSuccess = (list) => {
 	return {type: UPDATE_LIST_SUCCESS, list};
@@ -20,5 +20,36 @@ export const updateList = () => {
 				dispatch(updateListFailure(errorObj));
 			}
 		)
+	}
+};
+
+export const deleteItemList = index => {
+	return dispatch => {
+		return axios.delete(`/list/${index}.json`).then(() => {
+			dispatch(updateList());
+		});
+	}
+};
+
+export const editItemList = (index, item) => {
+	return dispatch => {
+		return axios.put(`/list/${index}.json`, item).then(() => {
+			dispatch(updateList());
+			dispatch(selectItem({}));
+		});
+	}
+};
+
+export const addItemList = (item) => {
+	return dispatch => {
+		return axios.post('/list.json', item).then(() => {
+			dispatch(updateList());
+		});
+	}
+};
+
+export const selectItem = item => {
+	return dispatch => {
+		return dispatch({type: SELECT_ITEM, item});
 	}
 };

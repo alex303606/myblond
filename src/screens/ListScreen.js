@@ -1,11 +1,12 @@
 import React, { Component } from 'react';
-import { Text, FlatList, View, StyleSheet, TouchableOpacity } from 'react-native';
+import { Text, FlatList, View, StyleSheet, TouchableOpacity, Alert } from 'react-native';
 import ScreenContainer from '../components/ScreenContainer';
 import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
-import { updateList } from '../store/actions/list';
+import { deleteItemList, selectItem, updateList } from '../store/actions/list';
 import Icon from 'react-native-vector-icons/FontAwesome';
+import Button from '../components/Button';
 
+Icon.loadFont();
 const styles = StyleSheet.create({
 	item: {
 		flexDirection: 'row',
@@ -15,7 +16,7 @@ const styles = StyleSheet.create({
 		fontSize: 26,
 		fontWeight: 'bold',
 		textAlign: 'center',
-		marginBottom: 20,
+		marginBottom: 10,
 	},
 	itemBorder: {
 		borderRightWidth: 1,
@@ -25,17 +26,32 @@ const styles = StyleSheet.create({
 		padding: 5,
 	},
 	itemName: {
-		width: '30%',
+		width: '35%',
 		justifyContent: 'flex-start',
 	},
 	itemAmount: {
-		width: '15%',
+		width: '13%',
 	},
 	itemMyPrice: {
-		width: '15%',
+		width: '16%',
 	},
 	itemClientPrice: {
-		width: '15%',
+		width: '16%',
+	},
+	itemButton: {
+		width: '10%',
+		borderRightWidth: 1,
+		alignItems: 'center',
+		justifyContent: 'center',
+		flexDirection: 'row',
+	},
+	button: {
+		borderWidth: 1,
+		borderRadius: 3,
+		width: 28,
+		height: 28,
+		alignItems: 'center',
+		justifyContent: 'center',
 	},
 	headerText: {
 		fontWeight: 'bold',
@@ -48,12 +64,6 @@ class ListScreen extends Component {
 		this.props.updateList();
 	}
 	
-	keyExtractor = item => {
-		return item.name + item.brand + item.myPrice + item.clientPrice;
-	};
-	
-	editItem = () => null;
-	
 	renderItem = ({item}) => {
 		return (
 			<View style={styles.item}>
@@ -61,17 +71,24 @@ class ListScreen extends Component {
 					<Text>{item.name}</Text>
 				</View>
 				<View style={[styles.itemBorder, styles.itemAmount]}>
-					<Text>{item.amount}</Text>
+					<Text numberOfLines={1} ellipsizeMode={'tail'}>{item.amount}</Text>
 				</View>
 				<View style={[styles.itemBorder, styles.itemMyPrice]}>
-					<Text>{item.myPrice}</Text>
+					<Text numberOfLines={1} ellipsizeMode={'tail'}>{item.myPrice}</Text>
 				</View>
 				<View style={[styles.itemBorder, styles.itemClientPrice]}>
-					<Text>{item.clientPrice}</Text>
+					<Text numberOfLines={1} ellipsizeMode={'tail'}>{item.clientPrice}</Text>
 				</View>
-				<TouchableOpacity onPress={this.editItem}>
-					<Icon name="rocket" size={30} color="#900" />
-				</TouchableOpacity>
+				<View style={styles.itemButton}>
+					<TouchableOpacity style={styles.button} onPress={this.deleteItem(item)}>
+						<Icon name="trash" size={25} color="red"/>
+					</TouchableOpacity>
+				</View>
+				<View style={[styles.itemButton, {borderRightWidth: 0}]}>
+					<TouchableOpacity style={styles.button} onPress={this.editItem(item)}>
+						<Icon name="pencil" size={25} color="blue"/>
+					</TouchableOpacity>
+				</View>
 			</View>
 		);
 	};
@@ -93,12 +110,40 @@ class ListScreen extends Component {
 		</View>
 	);
 	
-	itemSeparator = () => <View style={{borderBottomWidth: 1}}/>
+	itemSeparator = () => <View style={{borderBottomWidth: 1}}/>;
+	
+	keyExtractor = item => {
+		return item.id;
+	};
+	
+	editItem = item => () => {
+		this.props.selectItem(item);
+		return this.props.navigation.navigate('Edit');
+	};
+	
+	deleteItem = item => () => {
+		Alert.alert(
+			`Уверены что хотите удалить`,
+			item.name,
+			[
+				{
+					text: 'Отмена',
+					style: 'cancel',
+				},
+				{text: 'Удалить', onPress: () => this.props.deleteItemList(item.id)},
+			],
+			{cancelable: false},
+		);
+	};
+	
+	addItemHandler = () => this.props.navigation.navigate('Add');
 	
 	render() {
 		return (
 			<ScreenContainer>
-				<Text style={styles.title}>Список</Text>
+				<View>
+					<Button onPress={this.addItemHandler} title='Добавить'/>
+				</View>
 				<FlatList
 					scrollEnabled
 					keyExtractor={this.keyExtractor}
@@ -118,11 +163,12 @@ const mapStateToProps = state => ({
 	list: state.list.list,
 });
 
-const mapDispatchToProps = dispatch => {
-	return bindActionCreators({
-			updateList,
-		},
-		dispatch);
-};
+const mapDispatchToProps = dispatch => (
+	{
+		updateList: () => dispatch(updateList()),
+		deleteItemList: x => dispatch(deleteItemList(x)),
+		selectItem: x => dispatch(selectItem(x)),
+	}
+);
 
 export default connect(mapStateToProps, mapDispatchToProps)(ListScreen);
