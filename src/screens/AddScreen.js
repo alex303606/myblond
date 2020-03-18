@@ -24,8 +24,9 @@ const styles = StyleSheet.create({
 		borderColor: '#ccc',
 		borderRadius: 3,
 		fontSize: 16,
-		paddingHorizontal: 10,
+		minHeight: 40,
 		paddingVertical: 5,
+		paddingHorizontal: 10,
 		backgroundColor: 'white',
 		flexGrow: 1,
 	},
@@ -51,10 +52,11 @@ class AddScreen extends Component {
 	
 	state = {
 		name: '',
-		amount: '0',
+		amount: '',
 		brand: '',
-		clientPrice: '0',
-		myPrice: '0',
+		clientPrice: '',
+		myPrice: '',
+		volume: '',
 	};
 	
 	changeValue = (field) => (value) => {
@@ -62,7 +64,7 @@ class AddScreen extends Component {
 	};
 	
 	render() {
-		const {name, amount, brand, clientPrice, myPrice} = this.state;
+		const {name, amount, brand, clientPrice, myPrice, volume} = this.state;
 
 		return (
 			<ScreenContainer>
@@ -109,6 +111,20 @@ class AddScreen extends Component {
 							style={styles.input}
 							keyboardType={'numeric'}
 							maxLength={3}
+						/>
+					</View>
+					<View style={styles.row}>
+						<Text style={styles.label}>Объём:</Text>
+						<TextInput
+							value={volume}
+							placeholder='Введите объём в граммах:'
+							onChangeText={this.changeValue('volume')}
+							underlineColorAndroid='transparent'
+							blurOnSubmit
+							placeholderTextColor='rgba(56,63,67,1)'
+							style={styles.input}
+							keyboardType={'numeric'}
+							maxLength={4}
 						/>
 					</View>
 					<View style={styles.row}>

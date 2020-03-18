@@ -47,12 +47,13 @@ class EditScreen extends Component {
 	};
 	
 	state = {
-		id: 0,
+		id: '0',
 		name: '',
-		amount: '0',
+		amount: '',
 		brand: '',
-		clientPrice: '0',
-		myPrice: '0',
+		clientPrice: '',
+		myPrice: '',
+		volume: '',
 	};
 	
 	
@@ -73,7 +74,7 @@ class EditScreen extends Component {
 		if (!this.props.item) {
 			return <View/>;
 		}
-		const {name, amount, brand, clientPrice, myPrice} = this.state;
+		const {name, amount, brand, clientPrice, myPrice, volume} = this.state;
 		
 		return (
 			<ScreenContainer>
@@ -121,6 +122,22 @@ class EditScreen extends Component {
 							maxLength={3}
 						/>
 					</View>
+					
+					<View style={styles.row}>
+						<Text style={styles.label}>Объём:</Text>
+						<TextInput
+							value={volume}
+							placeholder='Введите объём в граммах:'
+							onChangeText={this.changeValue('volume')}
+							underlineColorAndroid='transparent'
+							blurOnSubmit
+							placeholderTextColor='rgba(56,63,67,1)'
+							style={styles.input}
+							keyboardType={'numeric'}
+							maxLength={4}
+						/>
+					</View>
+					
 					<View style={styles.row}>
 						<Text style={styles.label}>Своя цена:</Text>
 						<TextInput
@@ -179,8 +196,8 @@ class EditScreen extends Component {
 	};
 	
 	saveItem = () => {
-		const {id, name, amount, brand, clientPrice, myPrice} = this.state;
-		this.props.editItemList(id, {name, amount, brand, clientPrice, myPrice});
+		const {id, name, amount, brand, clientPrice, myPrice, volume} = this.state;
+		this.props.editItemList(id, {name, amount, brand, clientPrice, myPrice, volume});
 		this.navigationBackHandler();
 	};
 }

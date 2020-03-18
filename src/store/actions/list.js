@@ -13,7 +13,7 @@ export const updateList = () => {
 	return dispatch => {
 		return axios.get('/list.json').then(
 			response => {
-				return dispatch(updateListSuccess(response.data));
+				return dispatch(updateListSuccess(response.data || {}));
 			},
 			error => {
 				const errorObj = error.response ? error.response.data : {error: 'No internet'};
@@ -34,6 +34,15 @@ export const deleteItemList = index => {
 export const editItemList = (index, item) => {
 	return dispatch => {
 		return axios.put(`/list/${index}.json`, item).then(() => {
+			dispatch(updateList());
+			dispatch(selectItem({}));
+		});
+	}
+};
+
+export const editAllList = (list = {}) => {
+	return dispatch => {
+		return axios.put(`/list.json`, list).then(() => {
 			dispatch(updateList());
 			dispatch(selectItem({}));
 		});

@@ -12,6 +12,8 @@ const styles = StyleSheet.create({
 	item: {
 		flexDirection: 'row',
 		justifyContent: 'flex-start',
+		borderWidth: 1,
+		minHeight: 50,
 	},
 	title: {
 		fontSize: 26,
@@ -24,82 +26,85 @@ const styles = StyleSheet.create({
 		alignItems: 'center',
 		justifyContent: 'center',
 		flexDirection: 'row',
-		padding: 5,
+		paddingVertical: 5,
+		paddingHorizontal: 2,
 	},
 	itemName: {
-		width: '35%',
+		width: '34%',
 		justifyContent: 'flex-start',
+		paddingHorizontal: 5,
+	},
+	itemBrand: {
+		width: '18%',
 	},
 	itemAmount: {
-		width: '13%',
+		width: '12%',
 	},
 	itemMyPrice: {
-		width: '16%',
+		width: '18%',
 	},
 	itemClientPrice: {
-		width: '16%',
-	},
-	itemButton: {
-		width: '10%',
-		borderRightWidth: 1,
-		alignItems: 'center',
-		justifyContent: 'center',
-		flexDirection: 'row',
-		padding: 5,
-	},
-	button: {
-		borderWidth: 1,
-		borderRadius: 3,
-		width: 28,
-		height: 28,
-		alignItems: 'center',
-		justifyContent: 'center',
+		width: '18%',
 	},
 	headerText: {
 		fontWeight: 'bold',
-		fontSize: 16,
+		fontSize: 14,
+	},
+	text: {
+		fontSize: 14,
 	},
 	header: {
-		marginBottom: 10,
+		marginBottom: 20,
 	},
 	input: {
 		paddingHorizontal: 10,
 		borderWidth: 1,
 		borderRadius: 3,
 		fontSize: 18,
-		height: 35,
+		height: 40,
 		flexGrow: 1,
 		marginRight: 10,
 	},
 	clearBtn: {
-		height: 35,
-		width: 35,
+		height: 40,
+		width: 40,
 		alignItems: 'center',
 		borderWidth: 1,
 		borderRadius: 3,
-		paddingTop: 3,
+		paddingTop: 5,
 	},
 	searchContainer: {
 		flexDirection: 'row',
 		alignItems: 'flex-start',
 		justifyContent: 'flex-start',
-		marginTop: 10,
-	}
+		marginTop: 20,
+	},
+	headerItem: {
+		flexDirection: 'column',
+		alignItems: 'center',
+		justifyContent: 'center',
+	},
 });
 
 const Header = () => (
-	<View style={[styles.item, {borderWidth: 1}]}>
-		<View style={[styles.itemBorder, styles.itemName]}>
+	<View style={[styles.item, {borderWidth: 1, marginBottom: 10}]}>
+		<View style={[styles.itemBorder, styles.itemName, styles.headerItem]}>
 			<Text style={styles.headerText}>Название</Text>
 		</View>
-		<View style={[styles.itemBorder, styles.itemAmount]}>
-			<Text style={styles.headerText}>Кол</Text>
+		<View style={[styles.itemBorder, styles.itemBrand, styles.headerItem]}>
+			<Text style={styles.headerText}>Бренд</Text>
 		</View>
-		<View style={[styles.itemBorder, styles.itemMyPrice]}>
-			<Text style={styles.headerText}>СС</Text>
+		<View style={[styles.itemBorder, styles.itemAmount, styles.headerItem]}>
+			<Text style={styles.headerText}>Кол-</Text>
+			<Text style={styles.headerText}>во</Text>
 		</View>
-		<View style={[styles.itemBorder, styles.itemClientPrice]}>
-			<Text style={styles.headerText}>ЦК</Text>
+		<View style={[styles.itemBorder, styles.itemMyPrice, styles.headerItem]}>
+			<Text style={styles.headerText}>Своя</Text>
+			<Text style={styles.headerText}>цена</Text>
+		</View>
+		<View style={[styles.itemBorder, styles.headerItem, styles.itemClientPrice, {borderRightWidth: 0}]}>
+			<Text style={styles.headerText}>Цена</Text>
+			<Text style={styles.headerText}>клиента</Text>
 		</View>
 	</View>
 );
@@ -116,7 +121,7 @@ class ListScreen extends Component {
 	}
 	
 	componentDidUpdate(prevProps, prevState) {
-		if(_.isEqual(this.props.list, this.state.list)) {
+		if (_.isEqual(this.props.list, prevProps.list)) {
 			return;
 		}
 		this.setState({list: this.props.list});
@@ -168,9 +173,6 @@ class ListScreen extends Component {
 					onRefresh={this.handleRefresh}
 					refreshing={this.state.loading}
 					contentContainerStyle={{
-						borderRightWidth: 1,
-						borderLeftWidth: 1,
-						borderBottomWidth: 1,
 						flex: !!this.state.list.length ? 0 : 1
 					}}
 				/>
@@ -186,7 +188,7 @@ class ListScreen extends Component {
 	search = value => {
 		this.setState({searchValue: value}, () => {
 			const list = this.props.list.filter(x => {
-				return !!x && x.name && x.name.toLowerCase().includes(value.toLowerCase());
+				return !!x && (x.name && x.name.toLowerCase().includes(value.toLowerCase())) || (x.brand && x.brand.toLowerCase().includes(value.toLowerCase()));
 			});
 			this.setState({list});
 		});
@@ -198,59 +200,53 @@ class ListScreen extends Component {
 		</View>
 	);
 	
-	renderItem = ({item}) => {
-		return (
-			<View style={styles.item}>
-				<View style={[styles.itemBorder, styles.itemName]}>
-					<Text>{item.name}</Text>
-				</View>
-				<View style={[styles.itemBorder, styles.itemAmount]}>
-					<Text numberOfLines={1} ellipsizeMode={'tail'}>{item.amount}</Text>
-				</View>
-				<View style={[styles.itemBorder, styles.itemMyPrice]}>
-					<Text numberOfLines={1} ellipsizeMode={'tail'}>{item.myPrice}</Text>
-				</View>
-				<View style={[styles.itemBorder, styles.itemClientPrice]}>
-					<Text numberOfLines={1} ellipsizeMode={'tail'}>{item.clientPrice}</Text>
-				</View>
-				<View style={styles.itemButton}>
-					<TouchableOpacity style={styles.button} onPress={this.deleteItem(item)}>
-						<Icon name="trash" size={25} color="red"/>
-					</TouchableOpacity>
-				</View>
-				<View style={[styles.itemButton, {borderRightWidth: 0}]}>
-					<TouchableOpacity style={styles.button} onPress={this.editItem(item)}>
-						<Icon name="pencil" size={25} color="blue"/>
-					</TouchableOpacity>
-				</View>
-			</View>
+	openModal = item => () => {
+		Alert.alert(
+			`Что вы хотите сделать с ${item.name}?`,
+			'',
+			[
+				{text: 'Отмена', style: 'cancel',},
+				{text: 'Редактировать', onPress: () => this.editItem(item)},
+				{text: 'Удалить', onPress: () => this.props.deleteItemList(item.id)},
+			],
+			{cancelable: false},
 		);
 	};
 	
-	itemSeparator = () => <View style={{borderBottomWidth: 1}}/>;
+	renderItem = ({item}) => {
+		return (
+			<TouchableOpacity onPress={this.openModal(item)}>
+				<View style={styles.item}>
+					<View style={[styles.itemBorder, styles.itemName]}>
+						<Text style={styles.text}>{item.name}</Text>
+					</View>
+					<View style={[styles.itemBorder, styles.itemBrand]}>
+						<Text style={styles.text}>{item.brand}</Text>
+					</View>
+					<View style={[styles.itemBorder, styles.itemAmount]}>
+						<Text style={styles.text} numberOfLines={1} ellipsizeMode={'tail'}>{item.amount}</Text>
+					</View>
+					<View style={[styles.itemBorder, styles.itemMyPrice]}>
+						<Text style={styles.text} numberOfLines={1} ellipsizeMode={'tail'}>{`${item.myPrice} р`}</Text>
+					</View>
+					<View style={[styles.itemBorder, styles.itemClientPrice, {borderRightWidth: 0}]}>
+						<Text style={styles.text} numberOfLines={1}
+							  ellipsizeMode={'tail'}>{`${item.clientPrice} р`}</Text>
+					</View>
+				</View>
+			</TouchableOpacity>
+		);
+	};
+	
+	itemSeparator = () => <View style={{height: 10}}/>;
 	
 	keyExtractor = item => {
 		return item.id;
 	};
 	
-	editItem = item => () => {
+	editItem = item => {
 		this.props.selectItem(item);
 		return this.props.navigation.navigate('Edit');
-	};
-	
-	deleteItem = item => () => {
-		Alert.alert(
-			`Уверены что хотите удалить`,
-			item.name,
-			[
-				{
-					text: 'Отмена',
-					style: 'cancel',
-				},
-				{text: 'Удалить', onPress: () => this.props.deleteItemList(item.id)},
-			],
-			{cancelable: false},
-		);
 	};
 	
 	addItemHandler = () => this.props.navigation.navigate('Add');
